@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" href="/images/logo/lavo.png">
+	<title>Lavo</title>
+
+	<!-- Vendors Style-->
+
+	<link rel="stylesheet" href="src/css/vendors_css.css">
+	<!-- Style-->
+	<link rel="stylesheet" href="src/css/horizontal-menu.css">
+	<link rel="stylesheet" href="src/css/style.css">
+	<!-- <link rel="stylesheet" href="src/css/skin_color.css"> -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.datatables.net/select/1.6.0/css/select.dataTables.min.css" />
+	<style>
+		.swal2-container {
+			z-index: 1000000;
+		}
+
+		@media (max-width: 767px) {
+			.dataTable thead {
+				display: none;
+			}
+		}
+
+		.highlight-row {
+			transition-duration: 1s;
+			animation: addRow 2s 1 linear;
+			transform-origin: top;
+		}
+
+		@keyframes addRow {
+			0% {
+				transform: scale(1, 0);
+				line-height: 0px;
+				background-color: #fff;
+				visibility: collapse;
+			}
+
+			50% {
+				background-color: orange;
+				transform: scale(1, 1);
+				line-height: 18px;
+				/* font-size(16px) + border-top(1px) + border-bottom(1px) */
+				visibility: visible;
+			}
+
+			100% {
+				background-color: #fff;
+			}
+		}
+
+		.table>thead {
+			background-color: #778997;
+			color: #ffffff;
+		}
+
+		#ana {
+			opacity: 1;
+			transition: opacity 0.5s ease-in-out;
+		}
+
+		.active_but_1 {
+			background: linear-gradient(to right, #ff0000, #ff9900, #ffff00, #33cc33, #0066ff);
+		}
+
+
+		.bg-ht {
+			background: linear-gradient(to right, #02AAB0 0%, #00CDAC 51%, #02AAB0 100%);
+		}
+
+		.bg-dd {
+			background: linear-gradient(to right, #e9374c 0%, #EA384D 51%, #D31027 100%);
+			color: #c9d8f5
+		}
+
+		.bg-dsx {
+			background: linear-gradient(to right, #FF8008 0%, #FFC837 51%, #FF8008 100%);
+
+
+		}
+
+		.bg-csx {
+			background: linear-gradient(to right, #757F9A 0%, #D7DDE8 51%, #757F9A 100%);
+
+		}
+
+
+
+
+
+		.inactive {
+			background-color: #ffffff;
+		}
+
+		.text-long {
+			width: 300px;
+			/* Độ rộng của phần tử */
+			overflow: hidden;
+			/* Ẩn đi nội dung bị tràn ra ngoài phần tử */
+			text-overflow: ellipsis;
+			/* Hiển thị ký tự elipsis (...) khi nội dung bị cắt */
+			white-space: nowrap;
+			/* Ngăn không cho việc xuống dòng */
+		}
+
+		.dataTables_scrollHeadInner {
+			background: #e9e9e9;
+			text-align-last: center;
+		}
+
+		.table-ellipsis {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		/* chọn màu sắc khi select */
+		table.dataTable tbody tr.selected {
+			color: white !important;
+			background: linear-gradient(to right, #f34e4e, #ff9900, #ffff00, #33cc33, #0066ff) !important;
+		}
+	</style>
+</head>
+
+<body class="layout-top-nav light-skin theme-primary fixed" style="overflow-y: hidden;">
+	<div class="wrapper">
+		<div id="loader"></div>
+		<div id="nav_bar_main"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<div class="container-full">
+				<!-- Main content -->
+				<section class="content">
+					<div class="row">
+						<div class="col-sm-12 col-xl-5">
+							<div class="box" style="height:calc(100vh - 140px)">
+								<div class="box-header with-border pb-5 pt-5"
+									style="display: flex; justify-content: space-between">
+									<p class="fw-bolder d-xl-inline-flex d-none text-mute" id="title_data_table"
+										style="margin: 0; align-items: center">
+										DANH SÁCH SẢN PHẨM
+									</p>
+									<div style="display: inline-flex; align-items: center">
+										<li class="btn-group d-xl-inline-flex d-none">
+
+											<div class="app-menu">
+												<div class="search-bx mx-5">
+													<div class="input-group">
+														<input type="search" id="filterbox" class="form-control "
+															placeholder="Tìm kiếm sản phẩm" autocomplete="off">
+														<div class="input-group-addon" id="btn-filterbox">
+															<i class="fad fa-search"></i>
+														</div>
+													</div>
+												</div>
+											</div>
+										</li>
+										<buttons class="btn btn-success  ms-10 btn-sm fs-12"
+											onclick="update_new_product()">
+											<i class="fas fa-plus  fs-14  me-10"></i> Thêm sản phẩm
+										</buttons>
+										<buttons class="btn btn-warning ms-10 btn-sm fs-12"
+											onclick="show_hide_button()"><i class="far fa-cloud-download-alt fs-14"></i>
+										</buttons>
+										<buttons class="btn btn-danger  ms-10 btn-sm fs-12" id="select_btn">
+											<i class="fas fa-arrow-circle-right  fs-14"></i>
+										</buttons>
+									</div>
+								</div>
+
+								<div class="box-body p-0" id="container_table_product">
+									<table id="table_product" class="table table-hover small nowrap table-bordered"
+										style="width:100%;overflow: scroll;">
+
+									</table>
+
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-xl-7">
+							<div class="box d-none">
+								<div class="box-body">
+									<div class="col-12 ">
+										<div class="form-group">
+											<input class="" type="file" id="excell_json" name="excell_json"
+												onchange="handleFile_Select_plan(event)" />
+										</div>
+									</div>
+									<div class="form-group ">
+										<div class="controls">
+											<textarea id="plan_excell" name="plan_excell"
+												class="form-control"></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="box" style="height:calc(100vh - 140px)">
+								<form id="form_add_new_output" onsubmit="handle_submit_add_new_output_FBA(this)">
+									<div class="box-header with-border pb-5 pt-5"
+										style="display: flex; justify-content: space-between">
+
+										<p class="fw-bolder d-xl-inline-flex d-none text-mute" id="title_data_table"
+											style="margin: 0; align-items: center">
+											FORM LẬP KẾ HOẠCH SẢN XUẤT
+										</p>
+										<div>
+											<buttons class="btn btn-danger  ms-10 btn-sm fs-12" onclick="remove_all()">
+												<i class="fad fa-trash-alt fs-14 me-10"></i>Xóa tất cả
+											</buttons>
+
+											<label for="excell_json" type="button" id="btn_upload_file"
+												class="btn btn-primary  ms-10 btn-sm fs-12">
+												<i class="fad fa-cloud-upload"></i>
+												Import Data Excell
+											</label>
+
+
+											<buttons class="btn btn-success  ms-10 btn-sm fs-12"
+												onclick="them_ke_hoach_moi()">
+												<div class="spinner-icon me-10 d-none" id="spin_icon">
+												</div>
+												<i class="fas fa-plus  fs-14  me-10"></i> Tạo kế hoạch
+											</buttons>
+
+										</div>
+									</div>
+
+									<div class="box-body ">
+										<div class="row ">
+											<div class="col-12">
+												<div class="row mb-20">
+													<div class="form-group  col-sm-12 col-xl-3 mb-0 ">
+														<div class="input-group date">
+															<div class="input-group-addon" style="border:unset"
+																style="width:70px;text-align-last: left">
+																<i class="fas fa-money-check me-5 fs-14"></i>
+																Lệnh SX:
+															</div>
+															<input type="text"
+																class="form-control text-primary fw-bold fs-14"
+																autocomplete="off" style="border:unset"
+																id="lenh_san_xuat" value="LSX2107001">
+														</div>
+													</div>
+													<div class="form-group  col-sm-12 col-xl-3 mb-0 ">
+														<div class="input-group date">
+															<div class="input-group-addon" style="border:unset"
+																style="width:70px;text-align-last: left">
+
+																Ngày KH:
+															</div>
+															<input type="date"
+																class="form-control text-primary fw-bold fs-14"
+																autocomplete="off" style="border:unset"
+																id="ngay_ke_hoach" onchange="change_day_plan()">
+														</div>
+													</div>
+													<div class="form-group  col-sm-12 col-xl-3 mb-0 ">
+														<div class="input-group date">
+															<div class="input-group-addon" style="border:unset"
+																style="width:70px;text-align-last: left">
+
+																Ngày SX:
+															</div>
+															<input type="date"
+																class="form-control text-primary fw-bold fs-14"
+																autocomplete="off" style="border:unset"
+																id="ngay_san_xuat">
+														</div>
+													</div>
+													<div class="form-group  col-sm-12 col-xl-3 mb-0 ">
+														<div class="input-group date">
+															<div class="input-group-addon" style="border:unset"
+																style="width:70px;text-align-last: left">
+																<i class="fas fa-user-circle me-5 fs-14"></i>
+																Nhân viên
+															</div>
+															<input type="text"
+																class="form-control text-primary fw-bold fs-14"
+																autocomplete="off" style="border:unset" id="nguoi_lap">
+														</div>
+													</div>
+												</div>
+												<div class="row  mb-0">
+													<div class="form-group col-6 col-sm-12 col-xl-2 mb-0 ">
+														<h5 class="fw-bold text-info mb-0">Mã</h5>
+													</div>
+													<div class="form-group col-2 col-sm-12 col-xl-4 mb-0 ">
+														<h5 class="fw-bold text-info mb-0">Tên sản phẩm</h5>
+													</div>
+													<div class="form-group col-4 col-sm-12 col-xl-1 mb-0">
+														<h5 class="fw-bold text-info mb-0">Đvt</h5>
+													</div>
+													<div class="form-group col-4 col-sm-12 col-xl-2 mb-0">
+														<h5 class="fw-bold text-info mb-0">Q.ty</h5>
+													</div>
+													<div class="form-group col-4 col-sm-12  col-xl-2 mb-0">
+														<h5 class="fw-bold text-info mb-0">Lot</h5>
+													</div>
+													<div class="form-group col-4 col-sm-12  col-xl-1 mb-0">
+														<h5 class="fw-bold text-info mb-0">Xóa</h5>
+													</div>
+													<hr class="mt-10" />
+												</div>
+											</div>
+											<div class=" input_lis_box" style="height:calc(100vh - 20px)">
+
+											</div>
+										</div>
+									</div>
+
+								</form>
+							</div>
+						</div>
+					</div>
+			</div>
+			</section>
+			<!-- /.content -->
+		</div>
+	</div>
+	<!-- quick_user_toggle -->
+	<div class="modal modal-right fade" id="quick_user_toggle" tabindex="-1" style="z-index: 99999"></div>
+	<!-- /quick_user_toggle -->
+	</div>
+	<!-- ./wrapper -->
+	<!-- Modal cập nhật sản phẩm mới dữ liệu-->
+	<div class="modal fade" id="modal_sale_form" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		aria-labelledby="staticBackdropLabel" aria-hidden="true" style="z-index: 99999">
+		<form id="form_add_sale" onsubmit="handle_submit_update_new_sale(this)">
+			<div class="modal-dialog modal-lg ">
+				<div class="modal-content">
+					<div class="modal-header me-10 ms-10">
+						<p class="modal-title fw-bolder text-info mb-5" id="title_form">THÊM MỚI SẢN PHẨM</p>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+							style="float: right"></button>
+					</div>
+					<div class="modal-body" style="max-height: calc(100vh - 185px); overflow-y: auto">
+						<div class="col-12">
+							<div class="box">
+
+								<!-- /.box-header -->
+								<div class="box-body p-0">
+									<!-- Nav tabs -->
+									<ul class="nav nav-tabs" role="tablist">
+										<li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab"
+												href="#san_pham" role="tab" aria-selected="true"><span><i
+														class="ion-home me-15"></i>Sản phẩm</span></a> </li>
+										<li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#btp_1"
+												role="tab" aria-selected="false">
+												<span><i class="ion-person me-15"></i>BTP số 1</span></a>
+										</li>
+										<li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#btp_2"
+												role="tab" aria-selected="false">
+												<span><i class="ion-person me-15"></i>BTP số 2</span></a>
+										</li>
+										<li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#cong_bo"
+												role="tab" aria-selected="false">
+												<span><i class="ion-person me-15"></i>Công bố</span></a>
+										</li>
+										<li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#history"
+												role="tab" aria-selected="false">
+												<span><i class="ion-person me-15"></i>Lịch sử thay đổi</span></a>
+										</li>
+									</ul>
+									<!-- Tab panes -->
+									<div class="tab-content tabcontent-border">
+										<div class="tab-pane active" id="san_pham" role="tabpanel">
+											<div class="p-15">
+												<div class="row">
+													<div class="form-group col-sm-12 col-xl-4 d-none">
+														<input type="text" id="id">
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Thương hiệu">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Công dụng">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Nhóm hàng">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Dung tích">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Tình trạng">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Mã hàng">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-8">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Tên sản phẩm">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Đơn vị">
+														</div>
+													</div>
+
+
+													<div class="row">
+
+														<div class="row" style="place-content: center">
+															<div class="box">
+																<form class="form" action="#" method="post">
+																	<div class="dropzone" id="kt_dropzonejs_example_2"
+																		style="border: none">
+																		<div class="dz-message needsclick">
+																			<i
+																				class="bi bi-file-earmark-arrow-up text-primary fs-3x"></i>
+																			<div class="ms-4">
+																				<h3 class="fs-5 fw-bold mb-1 text-info">
+																					CLICK UPLOAD HÌNH ẢNH
+																				</h3>
+																				<span class="fs-7 fw-semibold">tối
+																					đa 10 hình</span>
+																			</div>
+																		</div>
+																	</div>
+																</form>
+															</div>
+															<input class="d-none" type="text" id="hinh_ky_gui"
+																name="hinh_ky_gui" />
+														</div>
+													</div>
+												</div>
+
+											</div>
+										</div>
+										<!-- BTP_1 -->
+										<div class="tab-pane" id="btp_1" role="tabpanel">
+											<div class="p-15">
+												<div class="row">
+													<div class="form-group col-sm-12 col-xl-8">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Tên bán thành phẩm I">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Dung sai">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="KL bao bì">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="KL BTP">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Tổng KL">
+														</div>
+													</div>
+
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Ngoại quan">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control" placeholder="Màu">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control" placeholder="Mùi">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control" placeholder="pH">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Độ nhớt">
+														</div>
+													</div>
+
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Tỷ trọng">
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- BTP_2 -->
+										<div class="tab-pane" id="btp_2" role="tabpanel">
+											<div class="p-15">
+												<div class="row">
+													<div class="form-group col-sm-12 col-xl-8">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Tên sản phẩm 2 (B)">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Đơn vị">
+														</div>
+													</div>
+
+													<div class="form-group col-sm-12 col-xl-8">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Tên bán thành phẩm II">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Dung sai">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="KL bao bì">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="KL BTP">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Tổng KL">
+														</div>
+													</div>
+
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Ngoại quan">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control" placeholder="Màu">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control" placeholder="Mùi">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control" placeholder="pH">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Độ nhớt">
+														</div>
+													</div>
+
+													<div class="form-group col-sm-12 col-xl-4">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Tỷ trọng">
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- CÔNG BỐ -->
+										<div class="tab-pane" id="cong_bo" role="tabpanel">
+											<div class="p-15">
+												<div class="row">
+													<div class="form-group col-sm-12 col-xl-6">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="date" class="form-control"
+																placeholder="Ngày công bố">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-6">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Số công bố">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-12">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<input type="text" class="form-control"
+																placeholder="Tên công bố">
+														</div>
+													</div>
+													<div class="form-group col-sm-12 col-xl-12">
+														<div class="input-group mb-3">
+															<span class="input-group-text">
+																<i class="fas fa-copyright me-5"></i>
+															</span>
+															<textarea class="form-control" placeholder="Ghi chú "
+																rows="4"></textarea>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- HISTORY -->
+										<div class="tab-pane" id="history" role="tabpanel">
+											<div class="p-15">
+												<div class="row">
+													<div class="col-12">
+														<div class="form-group col-sm-12 col-xl-12">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<textarea class="form-control"
+																	placeholder="Lịch sử thay đổi" rows="8"></textarea>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /.box-body p-0 -->
+							</div>
+							<!-- /.box -->
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-danger  hover-warning mt-10"
+							style="float: right;position: relative;transition: all 1s;" id="btn_capnhat">
+							<i class="fad fa-sign-in-alt"></i> THÊM SẢN PHẨM MỚI
+							<span class="spinner"></span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</form>
+
+	</div>
+	<!-- Vendor JS -->
+	<script src="src/js/vendors.min.js"></script>
+	<script src="assets/icons/feather-icons/feather.min.js"></script>
+	<script src="assets/vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+	<!-- main App -->
+
+	<script src="src/js/component/navbar.js"></script>
+	<script src="src/js/jquery.smartmenus.js"></script>
+	<script src="src/js/menus.js"></script>
+	<script src="src/js/template.js"></script>
+
+	<!-- sub main -->
+	<script src="assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script>
+	<script src="src/js/toastr.js"></script>
+	<script src="assets/vendor_components/moment/moment.js"></script>
+	<script src="assets/vendor_components/select2/dist/js/select2.full.js"></script>
+	<script src="assets/vendor_components/datatable/datatables.min.js"></script>
+	<!-- <script src="assets/vendor_components/sweetalert/sweetalert.min.js"></script> -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.all.min.js"></script>
+	<!-- <script src="assets/vendor_components/dropzone/dropzone.js"></script> -->
+	<!-- <script src="assets/vendor_components/echarts/dist/echarts.min.js"></script> -->
+
+	<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+	<script src="src\js\Axios.js"> </script>
+
+	<!-- page doc JS -->
+	<script src="src/js/page-dev/create_plan/main.js"></script>
+	<script src="src/js/page-dev/create_plan/form.js"></script>
+	<script src="src/js/page-dev/create_plan/analysis.js"></script>
+	<script src="src/js/page-dev/create_plan/dasboard.js"></script>
+	<!-- <script src="src/js/Dropzone.js"> </script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
+	<script src="https://cdn.datatables.net/select/1.6.0/js/dataTables.select.min.js"></script>
+
+</body>
+
+</html>

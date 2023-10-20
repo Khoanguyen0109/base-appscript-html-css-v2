@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" href="/images/logo/lavo.png">
+	<title>Lavo</title>
+
+	<!-- Vendors Style-->
+
+	<link rel="stylesheet" href="src/css/vendors_css.css">
+	<!-- Style-->
+	<link rel="stylesheet" href="src/css/horizontal-menu.css">
+	<link rel="stylesheet" href="src/css/style.css">
+	<!-- <link rel="stylesheet" href="src/css/skin_color.css"> -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+	<!-- <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" /> -->
+	<style>
+		.highlight-row {
+			transition-duration: 1s;
+			animation: addRow 2s 1 linear;
+			transform-origin: top;
+		}
+
+		@keyframes addRow {
+			0% {
+				transform: scale(1, 0);
+				line-height: 0px;
+				background-color: #fff;
+				visibility: collapse;
+			}
+
+			50% {
+				background-color: orange;
+				transform: scale(1, 1);
+				line-height: 18px;
+				/* font-size(16px) + border-top(1px) + border-bottom(1px) */
+				visibility: visible;
+			}
+
+			100% {
+				background-color: #fff;
+			}
+		}
+
+		.table>thead {
+			background-color: #778997;
+			color: #ffffff;
+		}
+
+		#ana {
+			opacity: 1;
+			transition: opacity 0.5s ease-in-out;
+		}
+
+		.active_but_1 {
+			background: linear-gradient(to right, #ff0000, #ff9900, #ffff00, #33cc33, #0066ff);
+		}
+
+		.inactive {
+			background-color: #ffffff;
+		}
+
+		.text-long {
+			width: 300px;
+			/* Độ rộng của phần tử */
+			overflow: hidden;
+			/* Ẩn đi nội dung bị tràn ra ngoài phần tử */
+			text-overflow: ellipsis;
+			/* Hiển thị ký tự elipsis (...) khi nội dung bị cắt */
+			white-space: nowrap;
+			/* Ngăn không cho việc xuống dòng */
+		}
+
+		.dataTables_scrollHeadInner {
+			background: #e9e9e9;
+			text-align-last: center;
+		}
+
+		.table-ellipsis {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	</style>
+</head>
+
+<body class="layout-top-nav light-skin theme-primary fixed">
+	<div class="wrapper">
+		<div id="loader"></div>
+		<div id="nav_bar_main"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<div class="container-full">
+				<!-- Main content -->
+				<section class="content">
+					<div class="row" style="justify-content: space-between;">
+						<!-- Tài liệu liên quan, EVN, CPC, QNaPC, Nội bộ, Khác. -->
+						<div class="col-xl-2 col-lg-6 col-6">
+							<div class="box m-5 box_click p-5 btn" style="cursor: pointer"
+								onclick="filter_list_total()">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="tong_bao_bi">0</h5>
+											<small class="fw-bold text-danger" id="tl_tong_bao_bi">100%</small>
+											<p class=" fs-14 text-primary mb-0 ">Tổng Bao Bì (mã)</p>
+										</div>
+										<div class="icon">
+											<i class="fal fa-heart-rate bg-success me-0 fs-16"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-2 col-lg-6 col-6">
+							<div class="box m-5 box_click p-5 btn " style="cursor: pointer"
+								onclick="filter_list('Process material')">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="dang_su_dung">0</h5>
+											<small class="fw-bold text-danger" id="tl_dang_su_dung">100%</small>
+
+											<p class=" fs-14 text-primary mb-0 ">Đang Sử Dụng</p>
+										</div>
+										<div class="icon">
+											<i class="fas fa-bolt bg-danger me-0 fs-16"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-2 col-lg-6 col-6">
+							<div class="box m-5 box_click p-5 btn " style="cursor: pointer"
+								onclick="filter_list('New Material - Y')">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="chua_su_dung">0</h5>
+											<small class="fw-bold text-danger" id="tl_chua_su_dung">100%</small>
+
+											<p class=" fs-14 text-primary mb-0 ">Chưa Sử Dụng</p>
+										</div>
+										<div class="icon">
+
+											<i class="fas fa-monitor-heart-rate bg-warning me-0 fs-16"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-2 col-lg-6 col-6">
+							<div class="box m-5 box_click p-5 btn " style="cursor: pointer"
+								onclick="filter_list('New Material - N')">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="chua_thiet_ke">0</h5>
+											<small class="fw-bold text-danger" id="tl_chua_thiet_ke">100%</small>
+
+											<p class=" fs-14 text-primary mb-0 ">Chưa Thiết Kế</p>
+										</div>
+										<div class="icon">
+											<i class="fad fa-treasure-chest me-0 fs-16 bg-info"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-2 col-lg-6 col-6">
+							<div class="box m-5 box_click p-5 btn " style="cursor: pointer"
+								onclick="filter_list('Cancel Material')">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="bo_mau">0</h5>
+											<small class="fw-bold text-danger" id="tl_bo_mau">100%</small>
+
+											<p class=" fs-14 text-primary mb-0 ">Bỏ Mẫu</p>
+										</div>
+										<div class="icon">
+
+											<i class="fad fa-object-group me-0 fs-16 bg-primary"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-2 col-lg-6 col-6 ">
+							<div class="box m-5 box_click p-5 btn " style="cursor: pointer"
+								onclick="filter_list('Khác',this)">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="khac">0</h5>
+											<small class="fw-bold text-danger" id="tl_khac">0%</small>
+
+											<p class=" fs-14 text-primary mb-0 ">KHÁC</p>
+										</div>
+										<div class="icon">
+
+											<i class="fas fa-book-spells me-0 fs-16 bg-dark"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<div class="row">
+						<div class="col-sm-12 col-xl-12">
+							<div class="box mb-0" style="height:calc(100vh - 65px)">
+
+								<div class="box-header with-border pb-5 pt-5">
+
+									<div style="display: flex; justify-content: space-between">
+
+										<p class="fw-bolder  text-info d-xl-inline-flex d-none" id="title_data_table"
+											style="margin: 0; align-items: center">
+
+											DANH SÁCH BAO BÌ
+
+										</p>
+
+										<div style="display: inline-flex; align-items: center">
+											<li class="btn-group ">
+
+												<div class="app-menu">
+													<div class="search-bx mx-5">
+														<div class="input-group">
+															<input type="search" id="filterbox" class="form-control"
+																placeholder="Tìm bao bì 
+																1" autocomplete="off">
+															<div class="input-group-addon" id="btn-filterbox">
+																<i class="fad fa-search fs-12"></i>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+
+											<buttons class="btn btn-primary-light ms-10 btn-sm fs-12 "
+												onclick="show_hide_button()"><i
+													class="far fa-cloud-download-alt fs-14"></i>
+											</buttons>
+
+
+											<buttons class="btn btn-primary-light ms-10 btn-sm fs-12"
+												onclick="show_hide_filter()"><i class="fal fa-filter fs-14"></i>
+											</buttons>
+
+										</div>
+
+									</div>
+									<div class="row fill-buttons m-5 ">
+										<div class="row">
+											<div class="form-group col-xl-2">
+												<div class="controls" id="div_thuonghieu_fill_pack">
+													<select class="form-control fill-input-table select2"
+														style="width: 100%" id="thuonghieu_fill_pack">
+														<option value=""> Thương hiệu </option>
+													</select>
+												</div>
+											</div>
+
+											<div class="form-group col-xl-2">
+												<div class="controls" id="div_loaibaobi_fill_pack">
+													<select class="form-control fill-input-table select2"
+														style="width: 100%" id="loaibaobi_fill_pack">
+														<option value=""> Loại bao bì </option>
+													</select>
+												</div>
+											</div>
+											<div class="form-group col-xl-2">
+												<div class="controls" id="div_nhombaobi_fill_pack">
+													<select class="form-control fill-input-table select2"
+														style="width: 100%" id="nhombaobi_fill_pack">
+														<option value=""> Nhóm bao bì </option>
+													</select>
+												</div>
+											</div>
+											<div class="form-group col-xl-2">
+												<div class="controls" id="div_dongbaobi_fill_pack">
+													<select class="form-control fill-input-table select2"
+														style="width: 100%" id="dongbaobi_fill_pack">
+														<option value=""> Dòng sản phẩm </option>
+													</select>
+												</div>
+											</div>
+											<div class="form-group col-xl-3">
+												<div class="controls" id="div_ncc_fill_pack">
+													<select class="form-control fill-input-table select2"
+														style="width: 100%" id="ncc_fill_pack">
+														<option value=""> Nhà cung </option>
+													</select>
+												</div>
+												
+											</div>
+											<div class="col-xl-1" style="text-align-last: center" ;>
+												<button type="button"
+													class="waves-effect waves-light btn btn-danger btn-sm ms-5 me-10"
+													onclick="reset_fill()">
+													<i class="fal fa-minus-square me-5"></i> Xóa
+												</button>
+											</div>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="box-body p-0" id="container_table_doc">
+									<div class="row text-center fs-8" id="spinner" style="place-content: center">
+										<div class="spinner-grow text-success" role="status">
+											<span class="sr-only">Loading...</span>
+										</div>
+										<div class="spinner-grow text-danger" role="status">
+											<span class="sr-only">Loading...</span>
+										</div>
+										<div class="spinner-grow text-warning" role="status">
+											<span class="sr-only">Loading...</span>
+										</div>
+									</div>
+
+									<table id="table_doc" class="table table-hover table-bordered table-sm small nowrap"
+										style="width:100%;overflow: scroll">
+
+									</table>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!-- /.content -->
+			</div>
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- <footer class="main-footer" id="main_footer"></footer> -->
+		<!-- Side panel -->
+
+		<!-- quick_user_toggle -->
+
+		<div class="modal modal-right fade" id="quick_user_toggle" tabindex="-1" style="z-index: 99999"></div>
+		<!-- /quick_user_toggle -->
+
+		<!-- Modal Form show note-->
+		<!-- Modal Form show note-->
+		<div class="modal fade" id="show_note" data-bs-backdrop="static" data-bs-keyboard="false"
+			aria-labelledby="staticBackdropLabel" aria-hidden="false" style=" z-index: 99999">
+
+			<!-- <div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header pb-5" style="display: inline-block">
+						<div style="display: flex">
+							<div style="display:flex">
+								<h6 class="modal-title fw-bold text-info mb-0 " id="name_pic_title"></h6>
+							</div>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+								style="float: right"></button>
+
+						</div>
+
+					</div>
+					<div class="modal-body" style="height: calc(100vh - 150px); overflow-y: auto;">
+						<div class="row" style="place-content: center;" >
+							<img src="" id="imagepreview" style="height: calc(100vh - 200px); width:auto; overflow-y: auto;" >
+						</div>
+					</div>
+				</div>
+
+			</div> -->
+			<div class="modal-dialog modal-lg " style="overflow-y: initial">
+				<div class="modal-content rounded-3">
+					<div class="modal-header me-15 ms-15" style="display: inline-block;">
+						<div style="display:flex">
+							<h5 class="modal-title fw-bold text-info mb-10" id="nameModal_schedule">Thông Tin Chi Tiết Bao Bì
+							</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+								style="float:right"></button>
+						</div>
+					</div>
+		
+					<div class="box-body modal-body" style="max-height: calc(100vh - 100px); overflow-y: auto;">
+						<div class="box">
+							<div class="box-header" style="text-align-last: center;">
+								<h6 class="box-title" id="name_pack"></h6>
+								<h6 class="box-title d-none" id="code_pack"></h6>
+							</div>
+		
+							<div class="ribbon-box ">
+								<div id="background_status_pack" class="ribbon-two ribbon-two-primary"><span id="status_pack"
+										class="fw-light fs-12"></span></div>
+								<div class="box-header no-border p-0">
+									<div class="user-bg" style="align-self: center; display: grid;justify-items: center">
+										<img id="img_pack" width="100%" alt="user"
+											src="https://drive.google.com/uc?id=1ol7mZ9xsisiih6hJlskj2w_qjXADfTyj"
+											style="height:150px; width:auto;margin-top: 10px;border-radius: 10px;cursor:pointer">
+		
+										<label for="file_pack_picture" type="button"
+											class="waves-effect waves-light btn btn-sm mb-5 btn-outline btn-info-light mt-10"><i
+												class="fad fa-cloud-upload-alt me-10"></i>Upload</label>
+		
+										<input type="file" id="file_pack_picture" name="file_pack_picture"
+											onchange="upLoad_picture_pack(event,'img_pack','List_Pack!J')" class="d-none" />
+									</div>
+								</div>
+								<div class="box-body">
+									<div class="row text-center mt-10">
+										<div class="col-md-6 border-end">
+											<strong>Dòng bao bì</strong>
+											<p id="driver_pack"></p>
+										</div>
+										<div class="col-md-6"><strong>Thương hiệu</strong>
+											<p id="brand_pack"></p>
+										</div>
+									</div>
+									<hr>
+									<div class="row text-center mt-10">
+										<div class="col-md-6 border-end"><strong>Nhà cung</strong>
+											<p id="suplier_pack"></p>
+										</div>
+										<div class="col-md-6"><strong>Tồn Kho</strong>
+											<p class="fw-bold text-info fs-16" id="stock_pack"></p>
+										</div>
+									</div>
+									<hr>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- Vendor JS -->
+	<script src="src/js/vendors.min.js"></script>
+	<script src="assets/icons/feather-icons/feather.min.js"></script>
+	<!-- <script src="assets/vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script> -->
+	<!-- main App -->
+
+	<script src="src/js/component/navbar.js"></script>
+	<script src="src/js/jquery.smartmenus.min.js"></script>
+	<script src="src/js/menus.js"></script>
+	<script src="src/js/template.js"></script>
+
+	<!-- sub main -->
+	<script src="assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script>
+	<script src="src/js/toastr.js"></script>
+	<script src="assets/vendor_components/moment/moment.js"></script>
+	<script src="assets/vendor_components/select2/dist/js/select2.full.js"></script>
+	<script src="assets/vendor_components/datatable/datatables.min.js"></script>
+	<script src="assets/vendor_components/sweetalert/sweetalert.min.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+	<script src="src\js\Axios.js"> </script>
+
+	<!-- page doc JS -->
+	<script src="src/js/page-dev/list_baobi/main.js"></script>
+	<script src="src/js/page-dev/list_baobi/form.js"></script>
+	<script src="src/js/page-dev/list_baobi/analysis.js"></script>
+
+
+
+</body>
+
+</html>

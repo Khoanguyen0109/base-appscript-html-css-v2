@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" href="/images/logo/lavo.png">
+	<title>Lavo</title>
+
+	<!-- Vendors Style-->
+	<script>
+		var user_name = JSON.parse(localStorage.getItem("user_name"));
+		if (!user_name) {
+			window.location.href = "/index.html";
+		} 
+	</script>
+	<link rel="stylesheet" href="src/css/vendors_css.css">
+	<!-- Style-->
+	<link rel="stylesheet" href="src/css/horizontal-menu.css">
+	<link rel="stylesheet" href="src/css/style.css">
+	<!-- <link rel="stylesheet" href="src/css/skin_color.css"> -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.min.css" rel="stylesheet">
+
+	<!-- <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" /> -->
+	<style>
+		.swal2-container {
+			z-index: 1000000;
+		}
+
+		@media (max-width: 767px) {
+			.dataTable thead {
+				display: none;
+			}
+		}
+
+		.highlight-row {
+			transition-duration: 1s;
+			animation: addRow 2s 1 linear;
+			transform-origin: top;
+		}
+
+		@keyframes addRow {
+			0% {
+				transform: scale(1, 0);
+				line-height: 0px;
+				background-color: #fff;
+				visibility: collapse;
+			}
+
+			50% {
+				background-color: orange;
+				transform: scale(1, 1);
+				line-height: 18px;
+				/* font-size(16px) + border-top(1px) + border-bottom(1px) */
+				visibility: visible;
+			}
+
+			100% {
+				background-color: #fff;
+			}
+		}
+
+		.table>thead {
+			background-color: #778997;
+			color: #ffffff;
+		}
+
+		#ana {
+			opacity: 1;
+			transition: opacity 0.5s ease-in-out;
+		}
+
+		.active_but_1 {
+			background: linear-gradient(to right, #ff0000, #ff9900, #ffff00, #33cc33, #0066ff);
+		}
+
+
+		.bg-ht {
+			background: linear-gradient(to right, #02AAB0 0%, #00CDAC 51%, #02AAB0 100%);
+		}
+
+		.bg-dd {
+			background: linear-gradient(to right, #e9374c 0%, #EA384D 51%, #D31027 100%);
+			color: #c9d8f5
+		}
+
+		.bg-dsx {
+			background: linear-gradient(to right, #FF8008 0%, #FFC837 51%, #FF8008 100%);
+
+
+		}
+
+		.bg-csx {
+			background: linear-gradient(to right, #757F9A 0%, #727479 51%, #757F9A 100%);
+
+		}
+
+
+
+
+
+		.inactive {
+			background-color: #ffffff;
+		}
+
+		.text-long {
+			width: 300px;
+			/* Độ rộng của phần tử */
+			overflow: hidden;
+			/* Ẩn đi nội dung bị tràn ra ngoài phần tử */
+			text-overflow: ellipsis;
+			/* Hiển thị ký tự elipsis (...) khi nội dung bị cắt */
+			white-space: nowrap;
+			/* Ngăn không cho việc xuống dòng */
+		}
+
+		.dataTables_scrollHeadInner {
+			background: #e9e9e9;
+			text-align-last: center;
+		}
+
+		.table-ellipsis {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	</style>
+
+</head>
+
+<body class="layout-top-nav light-skin theme-primary fixed">
+
+	<div class="wrapper">
+		<div id="loader"></div>
+		<div id="nav_bar_main"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+
+			<div class="container-full">
+				<!-- Main content -->
+				<section class="content">
+
+					<div class="row" style="justify-content: space-between;">
+
+
+
+						<div class="col-xl-2 col-lg-6 col-6 ">
+							<div class="box m-5 box_click p-5 btn " style="cursor: pointer"
+								onclick="filter_status_plan_total()">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="tong_ke_hoach">0</h5>
+											<p class=" fs-14 text-primary mb-0 ">Tông Kế hoạch</p>
+										</div>
+										<div class="icon">
+
+											<i class="fas fa-book-spells me-0 fs-16 bg-dark"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-2 col-lg-6 col-6">
+							<div class="box m-5 box_click p-5 btn" style="cursor: pointer"
+								onclick="filter_status_plan('Đang sản xuất')">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="dang_san_xuat">0</h5>
+											<p class=" fs-14 text-primary mb-0 ">Đang Sản Xuất</p>
+										</div>
+										<div class="icon">
+
+											<i class="fal fa-heart-rate bg-success me-0 fs-16"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-2 col-lg-6 col-6">
+							<div class="box m-5 box_click p-5 btn " style="cursor: pointer"
+								onclick="filter_status_plan('Dang dỡ')">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="dang_do">0</h5>
+											<p class=" fs-14 text-primary mb-0 ">Dang Dở</p>
+										</div>
+										<div class="icon">
+											<i class="fas fa-bolt bg-danger me-0 fs-16"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-2 col-lg-6 col-6">
+							<div class="box m-5 box_click p-5 btn " style="cursor: pointer"
+								onclick="filter_status_plan('Chờ sản xuất')">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="cho_san_xuat">0</h5>
+											<p class=" fs-14 text-primary mb-0 ">Chờ Sản Xuất</p>
+										</div>
+										<div class="icon">
+
+											<i class="fas fa-monitor-heart-rate bg-warning me-0 fs-16"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-2 col-lg-6 col-6">
+							<div class="box m-5 box_click p-5 btn " style="cursor: pointer"
+								onclick="filter_status_plan('Hoàn thành')">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="hoan_thanh">0</h5>
+											<p class=" fs-14 text-primary mb-0 ">Hoàn Thành</p>
+										</div>
+										<div class="icon">
+											<i class="fad fa-treasure-chest me-0 fs-16 bg-info"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-2 col-lg-6 col-6">
+							<div class="box m-5 box_click p-5 btn " style="cursor: pointer"
+								onclick="filter_status_plan_today()">
+								<div class="box-body p-5">
+									<div class="d-flex justify-content-between align-items-center">
+										<div>
+											<h5 class="my-0 fw-600" id="hom_nay">0</h5>
+											<p class=" fs-14 text-primary mb-0 ">Hôm Nay</p>
+										</div>
+										<div class="icon">
+
+											<i class="fad fa-object-group me-0 fs-16 bg-primary"
+												style="line-height:30px;width:30px;height:30px"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+					</div>
+					<div class="row">
+						<div class="col-sm-12 col-xl-12">
+							<div class="box mb-0" style="height:calc(100vh - 60px)">
+
+								<div class="box-header with-border pb-5 pt-5">
+
+									<div style="display: flex; justify-content: space-between">
+
+										<p class="fw-bolder  text-info d-xl-inline-flex d-none" id="title_data_table"
+											style="margin: 0; align-items: center">
+
+											DANH SÁCH KẾ HOẠCH SẢN XUẤT
+
+
+										</p>
+										<div style="display: inline-flex; align-items: center">
+
+											<li class="btn-group ">
+
+												<div class="app-menu">
+													<div class="search-bx mx-5">
+														<div class="input-group">
+															<input type="search" id="filterbox" class="form-control"
+																placeholder="Tìm sản phẩm" autocomplete="one-time-code">
+															<div class="input-group-addon" id="btn-filterbox">
+																<i class="fad fa-search fs-12"></i>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+
+
+
+											<buttons data-toggle="tooltip" data-placement="top"
+												class="btn  btn-success-light  ms-20 btn-sm" onclick="reset_table()">
+												<i class="fad fa-repeat fs-18 text-primary"></i>
+											</buttons>
+											<buttons data-toggle="tooltip" data-placement="top"
+												class="btn btn-warning-light  ms-20 btn-sm" onclick="getAllPlan()">
+												<div class="spinner-icon me-10  d-none" id="spin_icon_3"></div>
+												<i class="fas fa-tasks fs-18 text-primary"></i>
+											</buttons>
+											<div class="spinner-icon ms-10  d-none" id="spin_icon_4"></div>
+										</div>
+
+
+
+									</div>
+									<div class="row fill-buttons m-5 ">
+										<div class="row">
+											<div class="form-group col-sm-12 col-xl-3 m-0">
+												<div class="input-group">
+													<span class="input-group-text text-warning"
+														style="border:none;background-color:#e9ecef00"><i
+															class="fas fa-notes-medical"></i>
+													</span>
+													<select class="form-select fill-input-table text-secondary"
+														id="fill_muc_tai_lieu" style="border:none">
+														<option value="" selected="" disabled>All</option>
+													</select>
+
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="box-body p-0" id="container_table_doc">
+									<div class="row text-center fs-8" id="spinner" style="place-content: center">
+
+									</div>
+
+									<table id="table_doc" class="table table-hover table-bordered table-sm small nowrap"
+										style="width:100%;overflow: scroll">
+
+									</table>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!-- /.content -->
+			</div>
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- <footer class="main-footer" id="main_footer"></footer> -->
+		<!-- Side panel -->
+		<!-- Modal view doc-->
+		<div class="modal fade " id="doc_view" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+			aria-labelledby="staticBackdropLabel" aria-hidden="true" style=" z-index: 99999;overflow-y: hidden;">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header pb-5" style="display: inline-block">
+						<div style="display: flex">
+							<div>
+								<h5 class="modal-title fw-bold text-info mb-0" id="name_doc">XEM TÀI LIỆU</h5>
+							</div>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+								style="float: right"></button>
+						</div>
+					</div>
+					<div class="modal-body" style="height:calc(100vh - 64px);margin:0px;padding:0px;overflow:hidden">
+						<div class="row" style="height:-webkit-fill-available">
+							<iframe id='file_doc_view' src="" frameborder="0" width="100%" height="100%"></iframe>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- quick_user_toggle -->
+
+		<div class="modal modal-right fade" id="quick_user_toggle" tabindex="-1" style="z-index: 99999"></div>
+		<!-- /quick_user_toggle -->
+
+		<!-- Chi tiết công đoạn-->
+		<div style="z-index: 999999" class="modal fade " id="modal_schedule_comment" data-bs-keyboard="false"
+			tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg" style="overflow-y: initial;">
+				<div class="modal-content rounded-3">
+
+					<div class="box-header p-5">
+						<div class="media-body">
+							<div class="media border-fade p-0"
+								style="display: flex; justify-content: space-between;align-items: center">
+								<img class="avatar avatar-lg no-margin ms-10 img-fluid"
+									src="https://drive.google.com/uc?export=download&id=1ol7mZ9xsisiih6hJlskj2w_qjXADfTyj"
+									alt="..." id="comment_avatar_product" style="width: 50px;height: auto" />
+								<div>
+									<p class="fw-bold m-0" id="comment_name_product"></p>
+									<small class="fw-light m-0 fs-14 text-danger" id="comment_lot_product">
+									</small>
+								</div>
+								<button type="button" class=" btn btn-warning btn-sm ms-0"
+									onclick="open_form_update_schedule()"><i class="fas fa-plus fs-18"></i>
+								</button>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="modal-body" style="max-height: calc(100vh - 200px); overflow-y: auto;">
+
+						<div id="container_table_schedule_detail">
+							<table id="schedule_detail_table" class="table table-hover small nowrap test-scroll-table"
+								style="width:100%;overflow: scroll">
+							</table>
+						</div>
+						<p class="mt-0 ms-10" style="display: grid">
+							<a id="note_pak"></a>
+							<a id="note_blend"></a>
+							<a id="note_end"></a>
+						</p>
+
+						<input class="d-none" type="text" id="code_prod_picture" required />
+
+						<div class="box">
+							<div class="box-header no-padding">
+								<h6 class="box-title text-info">THÔNG TIN SẢN PHẨM</h6>
+								<button type="button"
+									class="waves-effect btn waves-light btn-sm btn-secondary mb-5 ms-5 mb-5"
+									onclick="open_form_update_schedule_fill()">
+									<i class="fad fa-pencil-alt fs-14 text-danger "></i>
+								</button>
+							</div>
+							<div class="box-body">
+								<div id="semi_1" style="display:none">
+									<small class="mt-0 ms-10">
+
+										<i class="fad fa-dot-circle me-10 "></i>
+										<a class=" fw-bold " id="name_semi_1"></a>
+
+										<i class="fad fa-box-open text-dark me-5 ms-20 "></i>
+										<a id="kl_semi_main_1">
+
+										</a>
+
+										<i class="fad fa-acorn text-dark me-5 ms-20 "></i>
+										<a class="  " id="kl_semi_main_2">
+
+										</a>
+
+										<i class="fad fa-balance-scale text-dark  me-5 ms-20 "></i>
+										<a id="kl_semi_main_3">
+
+										</a>
+									</small>
+
+
+								</div>
+
+								<div id="semi_2" style="display:none">
+									<small class="mt-0 ms-10">
+										<i class="fad fa-dot-circle me-10 "></i>
+										<a class=" fw-bold " id="name_semi_2"></a>
+
+										<i class="fad fa-box-open text-dark me-5 ms-20 "></i>
+										<a id="kl_semi_sub_1">
+
+										</a>
+
+										<i class="fad fa-acorn text-dark me-5 ms-20 "></i>
+										<a class="  " id="kl_semi_sub_2">
+
+										</a>
+
+										<i class="fad fa-balance-scale text-dark  me-5 ms-20 "></i>
+										<a id="kl_semi_sub_3">
+
+										</a>
+									</small>
+								</div>
+							</div>
+						</div>
+						<!-- <div class="box">
+		                    <div class="box-body">
+		                        <div class="box-header no-padding">
+		                            <h6 class="box-title text-info">Ghi Chú (Comment)</h6>
+		                        </div>
+		
+		                        <div id="schedule_Comment">
+		
+		                        </div>
+		                        <form class="publisher bt-1 border-fade" id="post_comment" onsubmit="post_comment(this)">
+		                            <img class="avatar avatar-sm" style="border-radius: 100px; background-color: #bcbcdd" src=""
+		                                alt="..." id="avt_userComment" />
+		                            <input class="d-none" type="text" id="id_combine" required />
+		                            <input autocomplete="one-time-code" class="publisher-input" type="text" placeholder="Add Your Comment"
+		                                id="comment" required />
+		                            <input class="publisher-input d-none" type="text" id="userView_connect" required />
+		                            <button type="submit" class="btn btn-sm btn-primary d-xl-flex d-none ">Sent</button>
+		
+		                        </form>
+		                    </div>
+		                </div> -->
+					</div>
+
+					<div class="modal-footer  pt-5" style="display:inline-flex; justify-content: space-between">
+						<small class="mt-0 ms-10">
+							<i class="fa fa-user me-5"></i> by
+							<a class="me-10" href="#" id="comment_staff_plan"></a>
+							<i class="fa fa-calendar me-5"></i>
+							<a class="me-10" href="#" id="comment_date_product"></a>
+							<!-- <i class="fad fa-book me-5"></i>
+		                    <a class="me-10"
+		                        href="https://drive.google.com/uc?export=download&id=1CjBJ92bR9aBTFch-8WVUedcx9sPEJ7ns"
+		                        id="comment_fileDownload">File Attach <i class="fa fa-download"></i></a> -->
+						</small>
+						<button type="button" class="waves-effect waves-light btn btn-sm  btn-danger"
+							data-bs-dismiss="modal">
+							Đóng
+						</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<!--  Thêm mới công đoạn -->
+		<div class="modal fade" id="modal_add_schedule" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+			aria-labelledby="staticBackdropLabel" aria-hidden="true" style="z-index: 99999999">
+			<form id="formSchedule" onsubmit="submit_add_schedule(this)">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content rounded-3">
+						<div class="modal-header pb-5" style="display: inline-block">
+							<div style="display: flex">
+								<div>
+									<h5 class="modal-title fw-bold text-info mb-0" id="nameModal_schedule_title">
+									</h5>
+									<small id="search_infor" style="font-style: italic"> </small>
+								</div>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+									style="float: right"></button>
+							</div>
+
+							<div class="input-group d-none" id="input-group">
+								<div class="input-group-addon"><i class="fa fa-search"></i></div>
+								<textarea wrap="soft" onclick="list_plan()" type="text" class="form-control" id="search"
+									name="search" placeholder="Chọn kế hoạch ..."></textarea>
+							</div>
+						</div>
+						<div class="box-body modal-body">
+							<div class="row">
+								<div class="col">
+									<div class="row">
+										<div class="col-12">
+											<div class="form-group">
+												<div class="controls d-none">
+													<input type="text" id="ID_schedule" />
+													<input type="text" id="loaiCongDoan" />
+													<input type="text" id="maSP" />
+													<input type="text" id="tenSP" />
+													<input type="text" id="soLo" />
+													<input type="text" id="ngayKH" />
+													<input type="text" id="slKeHoach" />
+													<input type="text" id="img_SP" />
+												</div>
+											</div>
+
+											<div class="row">
+												<div class="form-group col-xl-8">
+													<h5 class="fw-bold">Tên công đoạn<span class="text-danger">*</span>
+													</h5>
+													<div class="controls" id="div_tenCongDoan">
+														<select class="form-control select2" style="width: 100%"
+															id="tenCongDoan" required
+															data-validation-required-message="required"></select>
+													</div>
+												</div>
+
+												<div class="form-group col-xl-4">
+													<h5 class="fw-bold">Trạng thái <span class="text-danger">*</span>
+													</h5>
+													<div class="controls">
+														<select id="trangThai" name="trangThai" required
+															data-validation-required-message="required"
+															class="form-select">
+															<option value="">Chọn trạng thái</option>
+															<option value="">Chờ sản xuất</option>
+															<option>Đang sản xuất</option>
+															<option>Hoàn thành</option>
+															<option>dang dỡ</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class="form-group col-xl-12">
+												<h5 class="fw-bold">
+													Công nhân sản xuất<span class="text-danger">*</span>
+												</h5>
+												<div class="controls" id="div_congNhan">
+													<select class="form-control select2" multiple="multiple"
+														style="width: 100%" id="congNhan" required
+														data-validation-required-message="required"></select>
+												</div>
+											</div>
+											<div class="row">
+												<div class="form-group col-xl-4">
+													<h5 class="fw-bold">
+														Năng suất<span class="text-danger">*</span>
+														<small id="nangSuat_text"> </small>
+													</h5>
+
+													<div class="controls">
+														<input type="number" class="form-control" id="nangSuat_new"
+															name="nangSuat_new" placeholder="Năng suất"
+															onchange="calculator_nangSuat()" required
+															data-validation-required-message="required" value="0" />
+														<input class="form-control d-none " type="number"
+															id="nangSuat_old" name="nangSuat_old" value="0" />
+														<input class="form-control d-none" type="number" id="nangSuat"
+															name="nangSuat" />
+													</div>
+												</div>
+												<div class="form-group col-xl-4">
+													<h5 class="fw-bold">Đơn vị tính <span class="text-danger">*</span>
+													</h5>
+													<div class="controls">
+														<select id="loaiBaoBi" name="loaiBaoBi" required
+															data-validation-required-message="required"
+															class="form-select">
+															<option value="">Chọn đơn vị</option>
+															<option>Chai</option>
+															<option>Chai A</option>
+															<option>Chai B</option>
+															<option>Hũ</option>
+															<option>Hũ 1</option>
+															<option>Hủ 2</option>
+															<option>Hộp</option>
+
+															<option>Tuýp</option>
+															<option>Tuýp 1</option>
+															<option>Tuýp 2</option>
+															<option>Cái</option>
+															<option>Tờ</option>
+															<option>Túi</option>
+															<option>Miếng</option>
+															<option>khác</option>
+														</select>
+													</div>
+												</div>
+
+												<div class="form-group col-xl-4">
+													<h5 class="fw-bold">
+														Thời gian (Phút) <span class="text-danger">*</span><small
+															id="time_text"> </small>
+													</h5>
+													<div class="controls">
+														<input id="time_new" name="time_new" placeholder="Số phút"
+															class="form-control" required
+															data-validation-required-message="required"
+															onchange="calculator_time_product()" type="number"
+															step="0.1" value="0" />
+														<input class="form-control d-none" id="time_old" name="time_old"
+															value="0" type="number" step="0.1" />
+														<input class="form-control d-none" id="time_product"
+															name="time_product" type="number" step="0.1" />
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<h5 class="fw-bold">Chất lượng<span class="text-danger">*</span></h5>
+												<div class="controls">
+													<div class="form-check form-check-inline text-success">
+														<input class="form-check-input" type="radio" name="result"
+															id="OK" value="OK" checked
+															onClick="picture_prod_error_show()">
+														<label class="form-check-label " for="OK">
+															Đạt
+														</label>
+													</div>
+													<div class="form-check form-check-inline text-danger">
+														<input class="form-check-input" type="radio" name="result"
+															id="NOK" value="NOK" onClick="picture_prod_error_show()">
+														<label class="form-check-label " for="NOK">
+															Không đạt
+														</label>
+													</div>
+
+												</div>
+											</div>
+											<div class="form-group">
+												<h5 class="fw-bold">Ghi chú</h5>
+												<div class="controls">
+													<textarea id="ghiChu" name="ghiChu" placeholder="Ghi chú"
+														class="form-control" placeholder="Textarea text"></textarea>
+												</div>
+											</div>
+											<div class="row" id="div_picture_prod_error_show">
+												<div class="row" style="place-content: center" id="btn_upload_file">
+													<div class="box">
+														<form class="form" action="#" method="post">
+															<div class="dropzone" id="kt_dropzonejs_example_1"
+																style="border: none">
+																<div class="dz-message needsclick">
+																	<i
+																		class="bi bi-file-earmark-arrow-up text-primary fs-3x"></i>
+																	<div class="ms-4">
+																		<h3 class="fs-5 fw-bold mb-1 text-info">
+																			<i class="fad fa-cloud-upload me-10"></i>
+																			Click chọn file cần upload
+																		</h3>
+
+																	</div>
+																</div>
+
+															</div>
+
+														</form>
+													</div>
+												</div>
+												<!-- <div class="form-group col-xl-12 no-margin">
+													<div class="controls">
+														<div class="form-group">
+															<div class="user-bg"
+																style="align-self: center; display: grid;justify-items: center">
+																<img class="img-fluid rounded5 imagepreview"
+																	id="picture_Error" width="100%" alt="user"
+																	src="https://drive.google.com/uc?id=1ol7mZ9xsisiih6hJlskj2w_qjXADfTyj"
+																	style="height:150px; width:auto;margin-top: 10px;border-radius: 10px;cursor:pointer">
+
+																<label for="file_picture_error" type="button"
+																	class="waves-effect waves-light btn btn-sm mb-5 btn-outline btn-info-light mt-10"><i
+																		class="fad fa-cloud-upload-alt me-10"></i>
+																		Upload hình ảnh bao sản phẩm lỗi</label>
+
+																<input type="file" id="file_picture_error"
+																	name="file_picture_error"
+																	onchange="schedule_upload_picture_process_error(event)"
+																	class="d-none" />
+
+																<input type="text" value="-" class="form-control"
+																	id="input_picError" name="input_picError"
+																	style="display:none">
+
+															</div>
+														</div>
+
+													</div>
+												</div> -->
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-primary" id="submit-form-process" style="float: right">
+								<div class="spinner-icon me-10 d-none" id="spin_icon"></div>
+								<i class="fas fa-plus  fs-14  me-10"></i> CẬP NHẬT
+							</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<!-- Modal cập nhật sản phẩm mới dữ liệu-->
+		<div class="modal fade" id="modal_update_product" data-bs-backdrop="static" data-bs-keyboard="false"
+			tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="z-index: 999999">
+			<form id="form_update_info_product">
+				<div class="modal-dialog modal-lg ">
+					<div class="modal-content">
+						<div class="modal-header me-10 ms-10">
+							<p class="modal-title fw-bolder text-info mb-5" id="title_form">CẬP NHẬT THÔNG TIN SẢN PHẨM
+							</p>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+								style="float: right"></button>
+						</div>
+						<div class="modal-body" style="max-height: calc(100vh - 185px); overflow-y: auto">
+							<div class="col-12">
+								<div class="box">
+
+									<!-- /.box-header -->
+									<div class="box-body p-0">
+										<!-- Nav tabs -->
+										<ul class="nav nav-tabs" role="tablist">
+											<li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab"
+													href="#san_pham" role="tab" aria-selected="true"><span><i
+															class="ion-home me-15"></i>Sản phẩm</span></a> </li>
+											<li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#btp_1"
+													role="tab" aria-selected="false">
+													<span><i class="ion-person me-15"></i>BTP số 1</span></a>
+											</li>
+											<li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#btp_2"
+													role="tab" aria-selected="false">
+													<span><i class="ion-person me-15"></i>BTP số 2</span></a>
+											</li>
+											<li class="nav-item"> <a class="nav-link" data-bs-toggle="tab"
+													href="#cong_bo" role="tab" aria-selected="false">
+													<span><i class="ion-person me-15"></i>Công bố</span></a>
+											</li>
+											<li class="nav-item"> <a class="nav-link" data-bs-toggle="tab"
+													href="#history" role="tab" aria-selected="false">
+													<span><i class="ion-person me-15"></i>Lịch sử thay đổi</span></a>
+											</li>
+										</ul>
+										<!-- Tab panes -->
+										<div class="tab-content tabcontent-border">
+											<div class="tab-pane active" id="san_pham" role="tabpanel">
+												<div class="p-15">
+													<div class="row">
+														<div class="form-group col-sm-12 col-xl-4 d-none">
+															<input type="text" id="id">
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	placeholder="Thương hiệu" id="thuong_hieu">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	placeholder="Công dụng" id="cong_dung">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	placeholder="Nhóm hàng" id="nhom_hang">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	placeholder="Dung tích" id="dung_tich">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	placeholder="Tình trạng" id="tinh_trang">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	placeholder="Mã hàng" id="ma_hang">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-8">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	placeholder="Tên sản phẩm" id="ten_san_pham">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	placeholder="Đơn vị" id="don_vi_tinh">
+															</div>
+														</div>
+
+
+														<div class="row">
+
+															<div class="row" style="place-content: center">
+																<div class="box">
+																	<form class="form" action="#" method="post">
+																		<div class="dropzone"
+																			id="kt_dropzonejs_example_2"
+																			style="border: none">
+																			<div class="dz-message needsclick">
+																				<i
+																					class="bi bi-file-earmark-arrow-up text-primary fs-3x"></i>
+																				<div class="ms-4">
+																					<h3
+																						class="fs-5 fw-bold mb-1 text-info">
+																						CLICK UPLOAD HÌNH ẢNH SẢN PHẨM
+																					</h3>
+																					<span class="fs-7 fw-semibold">tối
+																						đa 10 hình</span>
+																				</div>
+																			</div>
+																		</div>
+																	</form>
+																</div>
+																<input class="d-none" type="text" id="hinh_anh" />
+															</div>
+														</div>
+													</div>
+
+												</div>
+											</div>
+											<!-- BTP_1 -->
+											<div class="tab-pane" id="btp_1" role="tabpanel">
+												<div class="p-15">
+													<div class="row">
+														<div class="form-group col-sm-12 col-xl-8">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="ten_btp_I" placeholder="Tên bán thành phẩm I">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="dung_sai_1" placeholder="Dung sai">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="kl_bao_bi_1" placeholder="KL bao bì">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="kl_btp_1" placeholder="KL BTP">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="tong_kl_1" placeholder="Tổng KL">
+															</div>
+														</div>
+
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="ngoai_quan_1" placeholder="Ngoại quan">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="mau_1" placeholder="Màu">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="mui_1" placeholder="Mùi">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="ph_1" placeholder="pH">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="do_nhot_1" placeholder="Độ nhớt">
+															</div>
+														</div>
+
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="ty_trong_1" placeholder="Tỷ trọng">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- BTP_2 -->
+											<div class="tab-pane" id="btp_2" role="tabpanel">
+												<div class="p-15">
+													<div class="row">
+														<div class="form-group col-sm-12 col-xl-8">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="ten_sp_2" placeholder="Tên sản phẩm 2 (B)">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="don_vi_2" placeholder="Đơn vị">
+															</div>
+														</div>
+
+														<div class="form-group col-sm-12 col-xl-8">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="ten_btp_2" placeholder="Tên bán thành phẩm II">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="dung_sai_2" placeholder="Dung sai">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="kl_bao_bi_2" placeholder="KL bao bì">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="kl_btp_2" placeholder="KL BTP">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="tong_kl_2" placeholder="Tổng KL">
+															</div>
+														</div>
+
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="ngoai_quan_2" placeholder="Ngoại quan">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="mau_2" placeholder="Màu">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="mui_2" placeholder="Mùi">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="ph_2" placeholder="pH">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="do_nhot_2" placeholder="Độ nhớt">
+															</div>
+														</div>
+
+														<div class="form-group col-sm-12 col-xl-4">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="ty_trong_2" placeholder="Tỷ trọng">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- CÔNG BỐ -->
+											<div class="tab-pane" id="cong_bo" role="tabpanel">
+												<div class="p-15">
+													<div class="row">
+														<div class="form-group col-sm-12 col-xl-6">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="date" class="form-control text-info"
+																	id="ngay_cong_bo" placeholder="Ngày công bố">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-6">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="so_cong_bo" placeholder="Số công bố">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-12">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<input type="text" class="form-control text-info"
+																	id="ten_cong_bo" placeholder="Tên công bố">
+															</div>
+														</div>
+														<div class="form-group col-sm-12 col-xl-12">
+															<div class="input-group mb-3">
+																<span class="input-group-text">
+																	<i class="fas fa-copyright me-5"></i>
+																</span>
+																<textarea class="form-control text-info"
+																	placeholder="Ghi chú " id="ghi_chu"
+																	rows="4"></textarea>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- HISTORY -->
+											<div class="tab-pane" id="history" role="tabpanel">
+												<div class="p-15">
+													<div class="row">
+														<div class="col-12">
+															<div class="form-group col-sm-12 col-xl-12">
+																<div class="input-group mb-3">
+																	<span class="input-group-text">
+																		<i class="fas fa-copyright me-5"></i>
+																	</span>
+																	<textarea class="form-control text-info"
+																		placeholder="Lịch sử thay đổi"
+																		id="lich_su_thay_doi" rows="8"></textarea>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.box-body p-0 -->
+								</div>
+								<!-- /.box -->
+							</div>
+
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-danger  hover-warning mt-10"
+								onclick="update_thong_tin_san_pham()"
+								style="float: right;position: relative;transition: all 1s;" id="btn_capnhat">
+								<i class="fad fa-sign-in-alt"></i>
+								<div class="spinner-icon me-10 d-none" id="spin_icon_2"></div> CẬP NHẬT THÔNG TIN SẢN
+								PHẨM
+								<span class="spinner"></span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</form>
+
+		</div>
+
+		<!-- SỬA KẾ HOẠCH -->
+
+		<div class="modal fade" id="modal_edit_plan" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+			aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<form id="edit_plan" onsubmit="submit_edit_plan(this)">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content rounded-3">
+						<div class="modal-header me-15 ms-15" style="display: inline-block;">
+							<div style="display:flex">
+								<h5 class="modal-title fw-bold text-info mb-10" id="nameModal_schedule">Sửa Kế Hoạch
+								</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+									style="float:right"></button>
+							</div>
+						</div>
+						<div class="box-body">
+							<div class="row">
+								<div class="col">
+									<div class="row">
+										<div class="col-12">
+											<div class="form-group d-none">
+												<h5 class="fw-bold">ID<span class="text-danger">*</span></h5>
+												<div class="controls">
+													<input type="text" id="ID_edit_plan" name="ID_edit_plan"
+														placeholder="ID_edit_plan" class="form-control d-none" />
+
+
+													<input type="text" id="index_edit_plan" name="index_edit_plan"
+														class="form-control d-none" />
+													<input type="text" id="id_combine_old" name="id_combine_old"
+														class="form-control d-none" />
+
+												</div>
+											</div>
+											<div class="row">
+												<div class="form-group  col-xl-4 ">
+													<h5 class="fw-bold">Ngày kế hoạch<span class="text-danger">*</span>
+													</h5>
+													<div class="controls">
+														<input type="text" id="ngayKH_edit_plan" name="ngayKH_edit_plan"
+															placeholder="Ngày kế hoạch" class="form-control" />
+													</div>
+												</div>
+
+												<div class="form-group  col-xl-4 ">
+													<h5 class="fw-bold">Ngày sản xuất<span class="text-danger">*</span>
+													</h5>
+													<div class="controls">
+														<input type="text" id="ngaySX_edit_plan" name="ngaySX_edit_plan"
+															placeholder="Ngày sản xuất" class="form-control" />
+													</div>
+												</div>
+
+												<div class="form-group  col-xl-4 ">
+													<h5 class="fw-bold">Lệnh sản xuất<span class="text-danger">*</span>
+													</h5>
+													<div class="controls">
+														<input type="text" id="lenhSX_edit_plan" name="lenhSX_edit_plan"
+															placeholder="Lệnh sản xuất" class="form-control" />
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="form-group  col-xl-4 ">
+													<h5 class="fw-bold">Mã<span class="text-danger">*</span></h5>
+													<div class="controls">
+														<input type="text" id="maSP_edit_plan" name="maSP_edit_plan"
+															placeholder="Mã" class="form-control" required
+															data-validation-required-message="required" />
+													</div>
+												</div>
+
+												<div class="form-group  col-xl-8 ">
+													<h5 class="fw-bold">Tên sản phẩm<span class="text-danger">*</span>
+													</h5>
+													<div class="controls">
+														<input type="text" id="tenSP_edit_plan" name="tenSP_edit_plan"
+															placeholder="Tên sản phẩm" class="form-control" required
+															data-validation-required-message="required" />
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="form-group  col-xl-4 ">
+													<h5 class="fw-bold">Đvt<span class="text-danger">*</span></h5>
+													<div class="controls">
+														<input type="text" id="dvt_edit_plan" name="dvt_edit_plan"
+															placeholder="ĐVT" class="form-control" required
+															data-validation-required-message="required" />
+													</div>
+												</div>
+
+												<div class="form-group  col-xl-4 ">
+													<h5 class="fw-bold">Số lô<span class="text-danger">*</span></h5>
+													<div class="controls">
+														<input type="text" id="soLo_edit_plan" name="soLo_edit_plan"
+															placeholder="Số lô" class="form-control" required
+															data-validation-required-message="required" />
+													</div>
+												</div>
+
+												<div class="form-group  col-xl-4 ">
+													<h5 class="fw-bold">SL kế hoạch<span class="text-danger">*</span>
+													</h5>
+													<div class="controls">
+														<input type="number" id="slKeHoach_edit_plan"
+															name="slKeHoach_edit_plan" placeholder="SL kế hoạch"
+															class="form-control" required
+															data-validation-required-message="required" />
+													</div>
+
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-primary">Submit</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- Vendor JS -->
+	<script src="src/js/vendors.min.js"></script>
+	<script src="assets/icons/feather-icons/feather.min.js"></script>
+	<script src="assets/vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+	<!-- main App -->
+
+	<script src="src/js/component/navbar.js"></script>
+	<script src="src/js/jquery.smartmenus.js"></script>
+	<script src="src/js/menus.js"></script>
+	<script src="src/js/template.js"></script>
+
+	<!-- sub main -->
+	<!-- <script src="assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script> -->
+	<script src="src/js/toastr.js"></script>
+	<script src="assets/vendor_components/moment/moment.js"></script>
+	<script src="assets/vendor_components/select2/dist/js/select2.full.js"></script>
+	<script src="assets/vendor_components/datatable/datatables.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.all.min.js"></script>
+	<script src="assets/vendor_components/dropzone/dropzone.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-toast-plugin@1.3.2/dist/jquery.toast.min.js"></script>
+
+
+
+	<!-- <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+	<script src="src\js\Axios.js"> </script>
+
+	<!-- page doc JS -->
+	<script src="src/js/page-dev/schedule/main.js"></script>
+	<script src="src/js/page-dev/schedule/form.js"></script>
+	<script src="src/js/page-dev/schedule/analysis.js"></script>
+	<script src="src/js/page-dev/schedule/dasboard.js"></script>
+	<script src="src/js/Dropzone.js"> </script>
+
+
+
+
+
+</body>
+
+</html>
